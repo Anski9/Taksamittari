@@ -10,6 +10,8 @@ import androidx.navigation.ui.navigateUp
 import androidx.navigation.ui.setupActionBarWithNavController
 import android.view.Menu
 import android.view.MenuItem
+import android.widget.EditText
+import android.widget.TextView
 import com.example.teht3.databinding.ActivityMainBinding
 
 class MainActivity : AppCompatActivity() {
@@ -26,10 +28,30 @@ class MainActivity : AppCompatActivity() {
         setSupportActionBar(binding.toolbar)
 
         binding.fab.setOnClickListener { view ->
-            Snackbar.make(view, "Taksa laskettu", Snackbar.LENGTH_SHORT)
-                .setAction("Action", null).show()
+            laskettuTaksa()
         }
     }
+
+    private fun laskettuTaksa() {
+        val lahtoTaksa = tallennettuLahtoTaksa()
+        val kilometriTaksa = tallennettuKilometriTaksa()
+        val ajettuMatka = findViewById<EditText>(R.id.kilometresInput).text.toString().toDoubleOrNull() ?: 0.0
+
+        val tulos = kilometriTaksa * ajettuMatka + lahtoTaksa
+        val taksaOutput = findViewById<TextView>(R.id.taksaOutput)
+        taksaOutput.text = "$tulos €"
+    }
+
+    private fun tallennettuLahtoTaksa(): Double {
+        val sharedPreferences = getSharedPreferences("Asetukset", MODE_PRIVATE)
+        return sharedPreferences.getString("LahtoTaksa", "0.0")!!.toDouble()
+    }
+
+    private fun tallennettuKilometriTaksa(): Double {
+        val sharedPreferences = getSharedPreferences("Asetukset", MODE_PRIVATE)
+        return sharedPreferences.getString("KilometriTaksa", "0.0")!!.toDouble()
+    }
+
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
         // Inflate the menu; this adds items to the action bar if it is present.
